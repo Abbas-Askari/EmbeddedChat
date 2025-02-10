@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo, useContext } from 'react';
+import React, { useState, useCallback, memo, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -23,7 +23,7 @@ import { useRCContext } from '../../context/RCInstance';
 import { useMessageStore } from '../../store';
 import { fileDisplayStyles as styles } from './Files.styles';
 
-const FileMessage = ({ fileMessage }) => {
+const FileMessage = ({ fileMessage, setJumpToMessage }) => {
   const { classNames, styleOverrides } = useComponentOverrides('FileMessage');
   const dispatchToastMessage = useToastBarDispatch();
   const { RCInstance } = useRCContext();
@@ -52,6 +52,10 @@ const FileMessage = ({ fileMessage }) => {
     anchor.click();
     document.body.removeChild(anchor);
   }, []);
+
+  const containerMessage = useMemo(() => {
+    return messages.find((msg) => msg.file?._id === fileMessage._id);
+  }, [messages, fileMessage]);
 
   const deleteFile = useCallback(
     async (file) => {
@@ -112,6 +116,12 @@ const FileMessage = ({ fileMessage }) => {
               label: 'Delete',
               icon: 'trash',
             },
+            {
+              id: 'jump',
+              action: () => setJumpToMessage(containerMessage),
+              label: 'Jump to message',
+              icon: 'arrow-back',
+            }
           ]}
         />
       </Box>
@@ -148,6 +158,7 @@ const FileMessage = ({ fileMessage }) => {
 
 FileMessage.propTypes = {
   fileMessage: PropTypes.any.isRequired,
+  setJumpToMessage: PropTypes.func,
 };
 
 export default memo(FileMessage);

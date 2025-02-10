@@ -158,6 +158,7 @@ export const MessageAggregator = ({
                     <FileDisplay
                       key={`${msg._id}-aggregated`}
                       fileMessage={msg}
+                      setJumpToMessage={(msg) => setJumpToMessage(msg)}
                     />
                   ) : (
                     <Box
